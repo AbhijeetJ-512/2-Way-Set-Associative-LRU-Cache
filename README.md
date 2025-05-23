@@ -1,53 +1,82 @@
-# 2-Way Set-Associative LRU CPU Cache Simulation
+# 🧠 2-Way Set-Associative LRU CPU Cache 
 
-## Overview
+## 🧾 Overview
+This project implements a 2-way set-associative CPU cache using the Least Recently Used (LRU) replacement policy in Verilog. The cache is designed to optimize memory access performance in CPU systems by reducing latency and memory bandwidth usage.
 
-This project implements a **2-way set-associative CPU cache** with **Least Recently Used (LRU)** replacement policy in Verilog. It includes an integrated main memory module and a top-level testbench to simulate typical cache operations such as reads, writes, hits, misses, writebacks, and refills.
-
-The cache is designed to handle memory blocks efficiently with configurable parameters and simulates realistic memory behavior with latency and block transfers.
-
----
-
-## Features
-
-- ✅ 2-Way Set Associativity
-- ✅ LRU Replacement Policy
-- ✅ Configurable Address, Data, and Block Sizes
-- ✅ Read & Write Support with Dirty Bit Tracking
-- ✅ Write-Back and Write-Allocate Policy
-- ✅ Main Memory Emulation with Optional Initialization
-- ✅ Synthesizable RTL
-- ✅ Testbench for Full Cache Behavior Simulation
+The design aims to reflect realistic CPU-memory interactions, including block refill, write-back handling, hit/miss resolution, and LRU-based replacement.
 
 ---
 
-## Parameters
+## 🔍 What is a 2-Way Set-Associative Cache?
+A 2-way set-associative cache splits the cache into multiple sets, with each set containing 2 blocks (ways). An incoming memory address maps to one specific set, and the cache logic checks both blocks in that set for a tag match (i.e., a hit).
 
-The design supports the following configurable parameters (defined via `parameter`):
+This architecture offers a good balance between complexity and performance:
 
-| Parameter        | Description                          | Default Value |
-|------------------|--------------------------------------|---------------|
-| `ADDRESS_WIDTH`  | Address bus width                    | `8`           |
-| `DATA_WIDTH`     | Width of a word                      | `32` bits     |
-| `BLOCK_SIZE`     | Size of one cache block              | `128` bits    |
-| `INIT_MEM`       | Enable memory initialization         | `1` (enabled) |
+- More flexible than direct-mapped caches (reduces conflict misses).
+- Less hardware-intensive than fully associative caches.
 
 ---
 
-## How It Works
+## 🧠 LRU Replacement Policy
+To maintain optimal cache utilization, the cache employs the Least Recently Used (LRU) replacement strategy:
 
-1. **Address Decomposition:** Address is split into tag, index, and offset.
-2. **Lookup Stage:** Determines hit/miss by comparing tags and valid bits.
-3. **Hit:** Access data directly and update LRU.
-4. **Miss:**
-   - If dirty, **write back** the block.
-   - Otherwise, **refill** from main memory.
-5. **Refill Stage:** Fetched data is written into the cache with LRU update.
+- Each set maintains an LRU bit to indicate the least recently accessed block.
+- On a cache miss, the block marked as LRU is evicted and replaced.
+- On a cache hit, the LRU bit is updated to reflect recent usage.
+
+This strategy helps in retaining more frequently accessed data in the cache, improving hit rate and overall performance.
 
 ---
 
-## Design Highlights
-- Efficient block-based memory access
-- LRU bit for dynamic victim selection
-- Dirty bit for minimizing unnecessary writes
-- Modular architecture suitable for integration with processors
+## ✅ Features
+- 2-Way Set Associativity  
+- LRU (Least Recently Used) Replacement  
+- Configurable Data, Address & Block Widths  
+- Write-Back & Write-Allocate Policies  
+- Dirty Bit Tracking for Cache Blocks  
+- Simulated Main Memory with Optional Initialization  
+- Synthesizable Verilog RTL  
+- Self-Contained Testbench for Simulation & Debugging  
+
+---
+
+## 🧩 Parameters
+
+| Parameter       | Description               | Default Value |
+|-----------------|---------------------------|---------------|
+| ADDRESS_WIDTH   | Address bus width         | 8             |
+| DATA_WIDTH      | Width of a word           | 32 bits       |
+| BLOCK_SIZE      | Size of one cache block   | 128 bits      |
+| INIT_MEM        | Enable memory initialization | 1 (enabled) |
+
+---
+
+## 🔧 How It Works
+
+### Address Decomposition
+Incoming addresses are divided into:  
+- **tag:** to uniquely identify data  
+- **index:** to locate the set  
+- **offset:** to access a word within a block  
+
+### Lookup
+- Both blocks (ways) in the indexed set are checked for tag match and valid bit.
+
+#### Hit:
+- Data is returned directly.
+- LRU bit is updated to mark this way as recently used.
+
+#### Miss:
+- If the LRU-marked block is dirty, it is written back to main memory.
+- The block is then refilled from memory and replaces the LRU block.
+
+### Write Handling
+- Follows **write-back** (only write to memory on eviction).
+- Follows **write-allocate** (on write miss, block is first brought into cache).
+
+---
+
+## 🧱 Architectural Diagram
+Below is the architectural layout of the design showing connections between CPU, Cache, and Main Memory:
+
+![Cache Architectural Diagram](./assets/Cache_Design.png)
