@@ -7,6 +7,13 @@ The design aims to reflect realistic CPU-memory interactions, including block re
 
 ---
 
+## 🧱 Architectural Diagram
+Below is the architectural layout of the design showing connections between CPU, Cache, and Main Memory:
+
+![Cache Architectural Diagram](./assets/Cache_Design.png)
+
+---
+
 ## 🔍 What is a 2-Way Set-Associative Cache?
 A 2-way set-associative cache splits the cache into multiple sets, with each set containing 2 blocks (ways). An incoming memory address maps to one specific set, and the cache logic checks both blocks in that set for a tag match (i.e., a hit).
 
@@ -75,8 +82,3 @@ Incoming addresses are divided into:
 - Follows **write-allocate** (on write miss, block is first brought into cache).
 
 ---
-
-## 🧱 Architectural Diagram
-Below is the architectural layout of the design showing connections between CPU, Cache, and Main Memory:
-
-![Cache Architectural Diagram](./assets/Cache_Design.png)
